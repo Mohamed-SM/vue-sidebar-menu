@@ -1,3 +1,5 @@
+import { pathToRegexp } from 'path-to-regexp'
+
 export const itemMixin = {
   data () {
     return {
@@ -37,11 +39,13 @@ export const itemMixin = {
       }
       return false
     },
-    matchRoute (route) {
-      if (this.$route) {
-        return route === this.$route.fullPath
+    matchRoute (route = []) {
+      if (Array.isArray(route)) {
+        for (let i = 0; i < route.length; i++) {
+          if (RegExp(pathToRegexp(route[i])).test(route)) return true
+        }
       } else {
-        return route === window.location.pathname + window.location.search + window.location.hash
+        return (RegExp(pathToRegexp(route)).test(window.location.pathname))
       }
     },
     clickEvent (event) {
